@@ -3,60 +3,72 @@
 	<head>
 		<title>TJC Campus Map</title>
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
-    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-    crossorigin=""/>
+	integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+	crossorigin=""/>
 		<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-    crossorigin=""></script>
-    <style>
-    body { background-color: #B0C1A0;}
-    #mapid {margin: 0 auto; text-align: center;}
-    #mapid { height: 400px; width: 600px; }
-    </style>
-    </head>
-    <body>
-        <div id="mapid"></div>
-        <script>
-					var coords = [[95,50], //art block left
-												[80,80], //art block
-												[130,80], //Block N left
-												[50,180], // Hall canteen bottom left
-												[120,185], //LT 1 bottom left
-												[175,185], //Block S bottom
-												[75,230], // Hall canteen top
-												[55,265], // Hall canteen right
-												[110,230], // LT1 bottom right
-												[120, 253],  // LT1 right
-												[150,235], //LT1 top right
-												[217,225], //R@ez/ GNC cafe bottom right
-												[245,211], //R@ez/ GNC cafe top
-												[305,250], //T block top
-												[352,220], // audi top (on left)
-												[354,251],// audi top (on right)
-												[326,276], // BLock I bottom left
-												[317, 310], // Block I bottom right
-												[352,310], // Block I top right
-												[14,337], // Assembly area bottom (on the left)
-												[7,368],  // Assembly area bottom (on the right)
-												[194,392], // field
-												[200,489], //PE block front
-												[148,490], // PE block relative left
-												[145,568]]; // Basketball shelter
-          var bounds = [[0,0], [400,600]];
-          var map = L.map('mapid', {
-            crs: L.CRS.Simple,
-            maxBounds: bounds,
-            maxBoundsViscosity: 0.75
-          });
-        var image = L.imageOverlay('https://raw.githubusercontent.com/Dharshan2004/tjc-openhse/444aef76a9b8c68b2bf64c6ed57bca080be80fd3/tjc_map/images/map/map.webp?token=AF6TR7WOYCPCJH6E4ZZ6EZ26Y7CYM', bounds).addTo(map);
-
-				for (i = 0; i < coords.length; i++) {
-				    L.marker([coords[i][0],coords[i][1]]).addTo(map);
-				}
-        map.fitBounds(bounds);
-				// map.on('click', function(e) {
-    		// 	alert("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng)
-				// });
-        </script>
-    </body>
+	integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+	crossorigin=""></script>
+	<style>
+  body { background-color: #B0C1A0;}
+  #mapid { margin: 0 auto;}
+	#mapid { height: 400px; width: 600px; }
+	</style>
+	</head>
+	<body>
+		<div id="mapid"></div>
+		<script>
+			function popupFunc(markerObject, videoLink, imageLink, index, title, content) {
+				markerObject.bindPopup('<div><iframe width="200" height="150" src="'+videoLink+'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><img class="arrow" id="arrow'+String(index)+'" src="img.png"></div>')
+				$(document).off("click", "#arrow" + String(index))
+				$(document).on("click", "#arrow" + String(index), function() {
+					markerObject._popup.setContent('<div><img height="150px" width="200px" src="'+imageLink+'"><h2>' + title + '<br>'+content+'</div>')
+				})
+				markerObject.getPopup().off('remove')
+				markerObject.getPopup().on('remove', function() {
+					markerObject._popup.setContent('<div><iframe width="200" height="150" src="'+videoLink+'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><img class="arrow" id="arrow'+String(index)+'" src="img.png"></div>')
+				});
+			}
+			var popupObjects = {}
+			var coords = [[95,50], //art block left
+						[80,80], //art block
+						[130,80], //Block N left
+						[50,180], // Hall canteen bottom left
+						[120,185], //LT 1 bottom left
+						[175,185], //Block S bottom
+						[75,230], // Hall canteen top
+						[55,265], // Hall canteen right
+						[110,230], // LT1 bottom right
+						[120, 253],  // LT1 right
+						[150,235], //LT1 top right
+						[217,225], //R@ez/ GNC cafe bottom right
+						[245,211], //R@ez/ GNC cafe top
+						[305,250], //T block top
+						[352,220], // audi top (on left)
+						[354,251],// audi top (on right)
+						[326,276], // BLock I bottom left
+						[317, 310], // Block I bottom right
+						[352,310], // Block I top right
+						[14,337], // Assembly area bottom (on the left)
+						[7,368],  // Assembly area bottom (on the right)
+						[194,392], // field
+						[200,489], //PE block front
+						[148,490], // PE block relative left
+						[145,568]]; // Basketball shelter
+			videoLinks = []
+			imageLinks = []
+			titles = []
+			contents = []
+			var bounds = [[0,0], [400,600]];
+			var map = L.map('mapid', {
+				crs: L.CRS.Simple,
+				maxBounds: bounds,
+				maxBoundsViscosity: 0.75
+			});
+			var image = L.imageOverlay('https://raw.githubusercontent.com/Dharshan2004/tjc-openhse/444aef76a9b8c68b2bf64c6ed57bca080be80fd3/tjc_map/images/map/map.webp?token=AF6TR7WOYCPCJH6E4ZZ6EZ26Y7CYM', bounds).addTo(map);
+			for (var i = 0; i < coords.length; i++) {
+				popupFunc(L.marker([coords[i][0],coords[i][1]]).addTo(map), videoLinks[i], imageLinks[i], i, titles[i], contents[i])
+			}
+			map.fitBounds(bounds);
+		</script>
+	</body>
 </html>
