@@ -15,6 +15,7 @@
     <body>
         <div id="mapid"></div>
         <script>
+					var coords = [[0,0], [50,50]];
           var bounds = [[0,0], [400,600]];
           var map = L.map('mapid', {
             crs: L.CRS.Simple,
@@ -22,6 +23,10 @@
             maxBoundsViscosity: 0.75
           });
         var image = L.imageOverlay('https://raw.githubusercontent.com/Dharshan2004/tjc-openhse/444aef76a9b8c68b2bf64c6ed57bca080be80fd3/tjc_map/images/map/map.webp?token=AF6TR7WOYCPCJH6E4ZZ6EZ26Y7CYM', bounds).addTo(map);
+
+				for (i = 0; i < coords.length; i++) {
+				    L.marker([coords[i][0],coords[i][1]]).addTo(map);
+				}
         map.fitBounds(bounds);
 
         </script>
