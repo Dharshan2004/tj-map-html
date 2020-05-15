@@ -1,9 +1,29 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>TJC Campus Map</title>
-  </head>
-  <body>
-    <p>Whatever map stuff here</p>
-  </body>
+	<head>
+		<title>TJC Campus Map</title>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+    crossorigin=""/>
+		<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+    crossorigin=""></script>
+    <style>
+    #mapid { height: 400px; width: 600px; }
+    </style>
+    </head>
+    <body>
+        <div id="mapid"></div>
+        <script>
+          var bounds = [[0,0], [400,600]];
+          var map = L.map('mapid', {
+            crs: L.CRS.Simple,
+            maxBounds: bounds,
+            maxBoundsViscosity: 0.75
+          });
+        var image = L.imageOverlay('https://raw.githubusercontent.com/Dharshan2004/tjc-openhse/444aef76a9b8c68b2bf64c6ed57bca080be80fd3/tjc_map/images/map/map.webp?token=AF6TR7WOYCPCJH6E4ZZ6EZ26Y7CYM', bounds).addTo(map);
+        map.fitBounds(bounds);
+
+        </script>
+    </body>
 </html>
