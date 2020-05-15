@@ -2,95 +2,192 @@
 <html>
 	<head>
 		<title>TJC Campus Map</title>
-		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
-	integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-  crossorigin=""/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js%22%3E"></script>
-		<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-	integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-	crossorigin=""></script>
-	<style>
-  body { background-color: #B0C1A0;}
-  #mapid { margin: 0 auto;}
-	#mapid { height: 400px; width: 600px; }
-	</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"/>
+		<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+		<script src="https://unpkg.com/leaflet-responsive-popup@0.6.4/leaflet.responsive.popup.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet-responsive-popup@0.6.4/leaflet.responsive.popup.css" />
+		<style>
+			body {
+				background-color: #B0C1A0;
+			}
+			#mapid {
+				height: 400px;
+				width: 600px;
+				margin: 0 auto;
+				background: #B0C1A0;
+			}
+			.arrow {
+				position: absolute;
+			    top: 50%;
+			    -ms-transform: translateY(-50%);
+			    transform: translateY(-50%);
+				height: 25px;
+				width: 25px;
+			}
+			.arrow:hover {
+				cursor: pointer;
+			}
+		</style>
 	</head>
 	<body>
 		<div id="mapid"></div>
 		<script>
 			function popupFunc(markerObject, videoLink, imageLink, index, title, content) {
-				markerObject.bindPopup('<div><iframe width="200" height="150" src="'+videoLink+'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><img class="arrow" id="arrow'+String(index)+'" src="img.png"></div>')
-				$(document).off("click", "#arrow" + String(index))
+			    let popup = L.responsivePopup({ hasTip: false }).setContent('<div><iframe width="300" height="225" src="'+videoLink+'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><img class="arrow" id="arrow'+String(index)+'" src="https://cdn.discordapp.com/attachments/644534071212507146/710897304315494560/img.png"></div>');
+				markerObject.bindPopup(popup);
+				$(document).off("click", "#arrow" + String(index));
 				$(document).on("click", "#arrow" + String(index), function() {
-					markerObject._popup.setContent('<div><img height="150px" width="200px" src="'+imageLink+'"><h2>' + title + '<br>'+content+'</div>')
-				})
-				markerObject.getPopup().off('remove')
+					markerObject.setPopupContent('<div style="text-align: center;"><img height="150px" width="200px" src="'+imageLink+'"><h2 style="text-align: center;">' + title + '</h2>'+content+'</div>');
+				});
+				markerObject.getPopup().off('remove');
 				markerObject.getPopup().on('remove', function() {
-					markerObject._popup.setContent('<div><iframe width="200" height="150" src="'+videoLink+'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><img class="arrow" id="arrow'+String(index)+'" src="img.png"></div>')
+					markerObject.setPopupContent('<div><iframe width="300" height="225" src="'+videoLink+'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><img class="arrow" id="arrow'+String(index)+'" src="https://cdn.discordapp.com/attachments/644534071212507146/710897304315494560/img.png"></div>');
 				});
 			}
-			var popupObjects = {}
-			var coords = [[95,50], //art block left
-						[80,80], //art block
-						[130,80], //Block N left
-						[50,180], // Hall canteen bottom left
-						[120,185], //LT 1 bottom left
-						[175,185], //Block S bottom
-						[75,230], // Hall canteen top
-						[55,265], // Hall canteen right
-						[110,230], // LT1 bottom right
-						[120, 253],  // LT1 right
-						[150,235], //LT1 top right
-						[217,225], //R@ez/ GNC cafe bottom right
-						[245,211], //R@ez/ GNC cafe top
-						[305,250], //T block top
-						[352,220], // audi top (on left)
-						[354,251],// audi top (on right)
-						[326,276], // BLock I bottom left
-						[317, 310], // Block I bottom right
-						[352,310], // Block I top right
-						[14,337], // Assembly area bottom (on the left)
-						[7,368],  // Assembly area bottom (on the right)
-						[194,392], // field
-						[200,489], //PE block front
-						[148,490], // PE block relative left
-						[145,568]]; // Basketball shelter
-      videoLinks = ['https://www.youtube.com/embed/_He3nYRByVI?autoplay=1',
-                    'https://www.youtube.com/embed/NMuQ5WU-yKA?autoplay=1',
-                    'https://www.youtube.com/embed/ivE4ki7TZ7Y?autoplay=1',
-                    'https://www.youtube.com/embed/Hw5bCqoOGJI?autoplay=1',
-                    'https://www.youtube.com/embed/vhLEb71eeUg?autoplay=1',
-                    'https://www.youtube.com/embed/1cvQ2_K-DKc?autoplay=1',
-                    'https://www.youtube.com/embed/E8xDCVdzo_8?autoplay=1',
-                    'https://www.youtube.com/embed/3lZq0ZaYurQ?autoplay=1',
-                    'https://www.youtube.com/embed/u1ZXrH-QQqY?autoplay=1',
-                    'https://www.youtube.com/embed/xg92SWV1wBw?autoplay=1',
-                    'https://www.youtube.com/embed/aMVwruOOwWQ?autoplay=1',
-                    'https://www.youtube.com/embed/gfCl0p9S6e0?autoplay=1',
-                    'https://www.youtube.com/embed/gfCl0p9S6e0?autoplay=1',
-                    'https://www.youtube.com/embed/9tl4z6X_cTE?autoplay=1',
-                    'https://www.youtube.com/embed/k2CePBJ1ZZE?autoplay=1',
-                    'https://www.youtube.com/embed/gGRCj9bgw6E?autoplay=1',
-                    'https://www.youtube.com/embed/9tl4z6X_cTE?autoplay=1',
-                    'https://www.youtube.com/embed/iHdyd7TkGx8?autoplay=1',
-                    'https://www.youtube.com/embed/jES9ytoEcT4?autoplay=1',
-                    'https://www.youtube.com/embed/3oPP4vfMiSg?autoplay=1',
-                    'https://www.youtube.com/embed/3oPP4vfMiSg?autoplay=1',
-                    'https://www.youtube.com/embed/wDIpUuyhenY?autoplay=1',
-                    'https://www.youtube.com/embed/UXjQl4PNZI0?autoplay=1',
-                    'https://www.youtube.com/embed/yaQlZywuYWY?autoplay=1',
-                    'https://www.youtube.com/embed/ZPDh9Vv-YOk?autoplay=1']
-			imageLinks = []
-			titles = []
-			contents = []
-			var bounds = [[0,0], [400,600]];
-			var map = L.map('mapid', {
+			let coords = [
+			    [95,50], //art block left
+				[80,80], //art block
+				[130,80], //Block N left
+				[50,180], // Hall canteen bottom left
+				[120,185], //LT 1 bottom left
+				[175,185], //Block S bottom
+				[75,230], // Hall canteen top
+				[55,265], // Hall canteen right
+				[110,230], // LT1 bottom right
+				[120, 253],  // LT1 right
+				[150,235], //LT1 top right
+				[217,225], //R@ez/ GNC cafe bottom right
+				[245,211], //R@ez/ GNC cafe top
+				[305,250], //T block top
+				[352,220], // audi top (on left)
+				[354,251],// audi top (on right)
+				[326,276], // BLock I bottom left
+				[317, 310], // Block I bottom right
+				[352,310], // Block I top right
+				[14,337], // Assembly area bottom (on the left)
+				[7,368],  // Assembly area bottom (on the right)
+				[194,392], // field
+				[200,489], //PE block front
+				[148,490], // PE block relative left
+				[145,568] // Basketball shelter
+			];
+			let videoLinks = [
+			    'https://www.youtube.com/embed/_He3nYRByVI?autoplay=1',
+				'https://www.youtube.com/embed/NMuQ5WU-yKA?autoplay=1',
+                'https://www.youtube.com/embed/ivE4ki7TZ7Y?autoplay=1',
+                'https://www.youtube.com/embed/Hw5bCqoOGJI?autoplay=1',
+                'https://www.youtube.com/embed/vhLEb71eeUg?autoplay=1',
+                'https://www.youtube.com/embed/1cvQ2_K-DKc?autoplay=1',
+                'https://www.youtube.com/embed/E8xDCVdzo_8?autoplay=1',
+                'https://www.youtube.com/embed/3lZq0ZaYurQ?autoplay=1',
+                'https://www.youtube.com/embed/u1ZXrH-QQqY?autoplay=1',
+                'https://www.youtube.com/embed/xg92SWV1wBw?autoplay=1',
+                'https://www.youtube.com/embed/aMVwruOOwWQ?autoplay=1',
+                'https://www.youtube.com/embed/gfCl0p9S6e0?autoplay=1',
+                'https://www.youtube.com/embed/gfCl0p9S6e0?autoplay=1',
+                'https://www.youtube.com/embed/9tl4z6X_cTE?autoplay=1',
+                'https://www.youtube.com/embed/k2CePBJ1ZZE?autoplay=1',
+                'https://www.youtube.com/embed/gGRCj9bgw6E?autoplay=1',
+                'https://www.youtube.com/embed/9tl4z6X_cTE?autoplay=1',
+                'https://www.youtube.com/embed/iHdyd7TkGx8?autoplay=1',
+                'https://www.youtube.com/embed/jES9ytoEcT4?autoplay=1',
+                'https://www.youtube.com/embed/3oPP4vfMiSg?autoplay=1',
+                'https://www.youtube.com/embed/3oPP4vfMiSg?autoplay=1',
+                'https://www.youtube.com/embed/wDIpUuyhenY?autoplay=1',
+                'https://www.youtube.com/embed/UXjQl4PNZI0?autoplay=1',
+                'https://www.youtube.com/embed/yaQlZywuYWY?autoplay=1',
+                'https://www.youtube.com/embed/ZPDh9Vv-YOk?autoplay=1'
+			 ];
+			let imageLinks = [
+			    "https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/Library%25202.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/Library%25201.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/Science%2520Lab.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/canteen.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/Heritage%2520Gallery_opening.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/wooden%2520swing.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/Hall.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/rock%2520wall.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/under%2520LT1.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/WHT%2520seminar%2520room.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/WHT_opening%2520ceremony.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/Below%2520R%40EZ.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/cafe.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/brick%2520wall.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/auditorium.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/auditorium1.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/IP%2520block1.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/class%2520of%25202019%2520at%2520IP%2520Block.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/IP%2520classroom.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/adventure%2520tower.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/adventure%2520tower1.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/sprawling%2520campus.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/sports%2520complex.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/sports%2520complex1.webp",
+				"https://raw.githubusercontent.com/ViincentLim/temasek_jc_map/master/images/venues/sheltered%2520court.webp"
+			];
+			let titles = [
+			    "Library",
+				"Library",
+				"Science Lab",
+				"Canteen",
+				"Heritage Gallery",
+				"Wooden Swing",
+				"Hall",
+				"Rock Wall",
+				"Under Lt1",
+				"Wee Heng Tin Seminar Room",
+				"Wee Heng Tin Seminar Room",
+				"Below R@EZ",
+				"Cafe",
+				"Brick Wall",
+				"Auditorium",
+				"Auditorium",
+				"IP Block",
+				"IP Block",
+				"IP Classroom",
+				"Adventure Tower",
+				"Adventure Tower",
+				"Sprawling Campus",
+				"Sports Complex",
+				"Sports Complex",
+				"Sheltered Court"
+			];
+			let contents = [
+			    "Our two-storey library is well-stocked with a wide range of titles, covering fiction and non-fiction books as well as periodicals, magazines and newspapers.",
+				"Our two-storey library is well-stocked with a wide range of titles, covering fiction and non-fiction books as well as periodicals, magazines and newspapers.",
+				"Our well-equipped science laboratories offer the perfect space for TJcians to unleash their inner Einstein through hands-on experiments.",
+				"The canteen offers a wide range of cuisines to cater to the students and staff of TJC.",
+				"",
+				"Feel the gentle breeze caress your skin as you enjoy a book on the wooden swing in our beautiful garden. Gifted by the graduating batch of 2014, the swings are popular with students who want to destress and have fun.",
+				"Be it attending concerts or exercising, often bustling with activities, our hall is the perfect space for TJcians going about their day.",
+				"Feeling adventurous? TJC has its very own rock wall for you to scale to greater heights.",
+				"Enjoy live performances by our talented students during your breaks.",
+				"The Wee Heng Tin Seminar Room is dedicated by TJC alumni from the pioneer batch of Chinese stream students in memory of Founding Principal, Mr Wee Heng Tin. The WHTSR provides a conducive environment to host overseas guests, workshops, seminars and lessons.",
+				"The Wee Heng Tin Seminar Room is dedicated by TJC alumni from the pioneer batch of Chinese stream students in memory of Founding Principal, Mr Wee Heng Tin. The WHTSR provides a conducive environment to host overseas guests, workshops, seminars and lessons.",
+				"Home to our very own cafe, the area below Research@East Zone is a popular spot where TJC-ians gather to have a quick bite and catch up with friends.",
+				"From ice lemon tea to piping hot sandwiches, the cafe offers a wide range of food and drinks to get TJC-ians through the day.",
+				"This iconic brick wall is always ready for any photo opportunity - you really can’t go wrong snapping a picture or two with friends and tutors here!",
+				"From student performances to dialogue sessions with prominent public figures, the auditorium holds a special place in the memories of many TJC-ians.",
+				"With a seating capacity of 600, our two-tier auditorium is where many important events in TJC are held.",
+				"",
+				"The TJ IP Class of 2019 in front of the IP block, which is certainly home to many of their fondest memories in TJC.",
+				"Our classrooms provide conducive learning spaces for our IP students as they engage in lessons infused with technology.",
+				"Confront and overcome your fears as you scale the heights of our very own adventure tower. ",
+				"With access to an adventure tower on campus, students can take on experiential challenges to build resilience, collaboration, and leadership.",
+				"It is easy to understand why TJC is known as the Botanic Gardens of the East when you step into our sprawling campus grounds.",
+				"Watch the sports complex come to life during our annual Sports Meet with the widely anticipated House cheerleading competitions and teacher-student friendly matches.",
+				"No matter which house you are from - Alpha, Beta, Gamma or Delta, we are one Team, one Dream, one Temasek.",
+				"Rain or shine, our multi-purpose sheltered court enables TJCians to keep fit through various sports and games."
+			];
+			const bounds = [[0,0], [400,600]];
+			let map = L.map('mapid', {
 				crs: L.CRS.Simple,
 				maxBounds: bounds,
-				maxBoundsViscosity: 0.75
+				maxBoundsViscosity: 0.85
 			});
-			var image = L.imageOverlay('https://raw.githubusercontent.com/Dharshan2004/tjc-openhse/444aef76a9b8c68b2bf64c6ed57bca080be80fd3/tjc_map/images/map/map.webp?token=AF6TR7WOYCPCJH6E4ZZ6EZ26Y7CYM', bounds).addTo(map);
-			for (var i = 0; i < coords.length; i++) {
+			L.imageOverlay('https://raw.githubusercontent.com/Dharshan2004/tjc-openhse/444aef76a9b8c68b2bf64c6ed57bca080be80fd3/tjc_map/images/map/map.webp?token=AF6TR7WOYCPCJH6E4ZZ6EZ26Y7CYM', bounds).addTo(map);
+			for (let i = 0; i < coords.length; i++) {
 				popupFunc(L.marker([coords[i][0],coords[i][1]]).addTo(map), videoLinks[i], imageLinks[i], i, titles[i], contents[i])
 			}
 			map.fitBounds(bounds);
