@@ -15,7 +15,31 @@
     <body>
         <div id="mapid"></div>
         <script>
-					var coords = [[0,0], [50,50]];
+					var coords = [[95,50], //art block left
+												[80,80], //art block
+												[130,80], //Block N left
+												[50,180], // Hall canteen bottom left
+												[120,185], //LT 1 bottom left
+												[175,185], //Block S bottom
+												[75,230], // Hall canteen top
+												[55,265], // Hall canteen right
+												[110,230], // LT1 bottom right
+												[120, 253],  // LT1 right
+												[150,235], //LT1 top right
+												[217,225], //R@ez/ GNC cafe bottom right
+												[245,211], //R@ez/ GNC cafe top
+												[305,250], //T block top
+												[352,220], // audi top (on left)
+												[354,251],// audi top (on right)
+												[326,276], // BLock I bottom left
+												[317, 310], // Block I bottom right
+												[352,310], // Block I top right
+												[14,337], // Assembly area bottom (on the left)
+												[7,368],  // Assembly area bottom (on the right)
+												[194,392], // field
+												[200,489], //PE block front
+												[148,490], // PE block relative left
+												[145,568]]; // Basketball shelter
           var bounds = [[0,0], [400,600]];
           var map = L.map('mapid', {
             crs: L.CRS.Simple,
@@ -28,7 +52,9 @@
 				    L.marker([coords[i][0],coords[i][1]]).addTo(map);
 				}
         map.fitBounds(bounds);
-
+				map.on('click', function(e) {
+    			alert("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng)
+				});
         </script>
     </body>
 </html>
